@@ -2,26 +2,6 @@
   "version": 2,
   "dependencies": {
     "net6.0": {
-      "Buildalyzer": {
-        "type": "Direct",
-        "requested": "[4.1.5, )",
-        "resolved": "4.1.5",
-        "contentHash": "5hyj4/DToqhYIVNymkKle9z/ImqGRfC7EwnQvXqjZP8ywzW5fAA+XDWHWwYNl0cFogk/WPNI9g3oBfSMcQY9qg==",
-        "dependencies": {
-          "Buildalyzer.Logger": "4.1.5",
-          "MSBuild.StructuredLogger": "2.1.507",
-          "Microsoft.Build": "16.9.0",
-          "Microsoft.Build.Framework": "16.9.0",
-          "Microsoft.Build.Tasks.Core": "16.9.0",
-          "Microsoft.Build.Utilities.Core": "16.9.0",
-          "Microsoft.Extensions.DependencyModel": "2.1.0",
-          "Microsoft.Extensions.Logging": "2.1.1",
-          "Microsoft.Extensions.Logging.Abstractions": "2.1.1",
-          "MsBuildPipeLogger.Server": "1.1.6",
-          "NuGet.Frameworks": "6.0.0",
-          "System.Reflection.TypeExtensions": "4.7.0"
-        }
-      },
       "DotNet.Glob": {
         "type": "Direct",
         "requested": "[3.1.3, )",
@@ -233,11 +213,6 @@
         "requested": "[17.2.3, )",
         "resolved": "17.2.3",
         "contentHash": "VcozGeE4SxIo0cnXrDHhbrh/Gb8KQnZ3BvMelvh+iw0PrIKtuuA46U2Xm4e4pgnaWFgT4RdZfTpWl/WPRdw0WQ=="
-      },
-      "Buildalyzer.Logger": {
-        "type": "Transitive",
-        "resolved": "4.1.5",
-        "contentHash": "aBg4GEMCgo+96YRQaYnuTN6KTQelF4BcvSwBHa+13M4WcBu3rzNJ9jdL60TdR6PQ183YOCNbmNRWTurZvyaNlQ=="
       },
       "FSharp.Core": {
         "type": "Transitive",
@@ -1700,6 +1675,26 @@
           "System.Threading": "4.0.11",
           "System.Xml.ReaderWriter": "4.0.11"
         }
+      },
+      "buildalyzer": {
+        "type": "Project",
+        "dependencies": {
+          "Buildalyzer.Logger": "[1.0.0, )",
+          "MSBuild.StructuredLogger": "[2.1.507, )",
+          "Microsoft.Build": "[16.9.0, )",
+          "Microsoft.Build.Framework": "[16.9.0, )",
+          "Microsoft.Build.Tasks.Core": "[16.9.0, )",
+          "Microsoft.Build.Utilities.Core": "[16.9.0, )",
+          "Microsoft.Extensions.DependencyModel": "[2.1.0, )",
+          "Microsoft.Extensions.Logging": "[2.1.1, )",
+          "Microsoft.Extensions.Logging.Abstractions": "[2.1.1, )",
+          "MsBuildPipeLogger.Server": "[1.1.6, )",
+          "NuGet.Frameworks": "[6.0.0, )",
+          "System.Reflection.TypeExtensions": "[4.7.0, )"
+        }
+      },
+      "buildalyzer.logger": {
+        "type": "Project"
       },
       "stryker.datacollector": {
         "type": "Project",

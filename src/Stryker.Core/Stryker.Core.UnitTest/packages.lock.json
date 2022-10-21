@@ -102,11 +102,6 @@
           "xunit.extensibility.execution": "2.4.0"
         }
       },
-      "Buildalyzer.Logger": {
-        "type": "Transitive",
-        "resolved": "4.1.5",
-        "contentHash": "aBg4GEMCgo+96YRQaYnuTN6KTQelF4BcvSwBHa+13M4WcBu3rzNJ9jdL60TdR6PQ183YOCNbmNRWTurZvyaNlQ=="
-      },
       "Castle.Core": {
         "type": "Transitive",
         "resolved": "5.1.0",
@@ -1654,10 +1649,30 @@
           "xunit.extensibility.core": "[2.4.2]"
         }
       },
+      "buildalyzer": {
+        "type": "Project",
+        "dependencies": {
+          "Buildalyzer.Logger": "[1.0.0, )",
+          "MSBuild.StructuredLogger": "[2.1.507, )",
+          "Microsoft.Build": "[16.9.0, )",
+          "Microsoft.Build.Framework": "[16.9.0, )",
+          "Microsoft.Build.Tasks.Core": "[16.9.0, )",
+          "Microsoft.Build.Utilities.Core": "[16.9.0, )",
+          "Microsoft.Extensions.DependencyModel": "[2.1.0, )",
+          "Microsoft.Extensions.Logging": "[2.1.1, )",
+          "Microsoft.Extensions.Logging.Abstractions": "[2.1.1, )",
+          "MsBuildPipeLogger.Server": "[1.1.6, )",
+          "NuGet.Frameworks": "[6.0.0, )",
+          "System.Reflection.TypeExtensions": "[4.7.0, )"
+        }
+      },
+      "buildalyzer.logger": {
+        "type": "Project"
+      },
       "stryker": {
         "type": "Project",
         "dependencies": {
-          "Buildalyzer": "[4.1.5, )",
+          "Buildalyzer": "[1.0.0, )",
           "DotNet.Glob": "[3.1.3, )",
           "FSharp.Compiler.Service": "[41.0.6, )",
           "Grynwald.MarkdownGenerator": "[2.5.34, )",
@@ -1678,8 +1693,8 @@
           "ShellProgressBar": "[5.2.0, )",
           "Spectre.Console": "[0.45.0, )",
           "Spectre.Console.Analyzer": "[0.45.0, )",
-          "Stryker.DataCollector": "[3.0.1, )",
-          "Stryker.RegexMutators": "[3.0.1, )",
+          "Stryker.DataCollector": "[1.0.0, )",
+          "Stryker.RegexMutators": "[1.0.0, )",
           "System.IO.Abstractions": "[17.2.3, )"
         }
       },
@@ -1693,26 +1708,6 @@
         "type": "Project",
         "dependencies": {
           "RegexParser": "[0.5.1, )"
-        }
-      },
-      "Buildalyzer": {
-        "type": "CentralTransitive",
-        "requested": "[4.1.5, )",
-        "resolved": "4.1.5",
-        "contentHash": "5hyj4/DToqhYIVNymkKle9z/ImqGRfC7EwnQvXqjZP8ywzW5fAA+XDWHWwYNl0cFogk/WPNI9g3oBfSMcQY9qg==",
-        "dependencies": {
-          "Buildalyzer.Logger": "4.1.5",
-          "MSBuild.StructuredLogger": "2.1.507",
-          "Microsoft.Build": "16.9.0",
-          "Microsoft.Build.Framework": "16.9.0",
-          "Microsoft.Build.Tasks.Core": "16.9.0",
-          "Microsoft.Build.Utilities.Core": "16.9.0",
-          "Microsoft.Extensions.DependencyModel": "2.1.0",
-          "Microsoft.Extensions.Logging": "2.1.1",
-          "Microsoft.Extensions.Logging.Abstractions": "2.1.1",
-          "MsBuildPipeLogger.Server": "1.1.6",
-          "NuGet.Frameworks": "6.0.0",
-          "System.Reflection.TypeExtensions": "4.7.0"
         }
       },
       "DotNet.Glob": {
