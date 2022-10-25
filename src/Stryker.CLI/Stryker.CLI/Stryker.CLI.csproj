@@ -27,10 +27,6 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
   
-  <PropertyGroup>
-    <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
-  </PropertyGroup>
-  
   <ItemGroup>
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" />
     <PackageReference Include="MsBuildPipeLogger.Logger" />
