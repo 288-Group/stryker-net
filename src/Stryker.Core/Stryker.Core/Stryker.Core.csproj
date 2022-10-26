@@ -33,7 +33,7 @@
     <EmbeddedResource Include="Reporters\HtmlReporter\Files\dist\mutation-test-elements.js" />
     <EmbeddedResource Include="Reporters\HtmlReporter\Files\mutation-report.html" />
 
-    <EmbeddedResource Include="ToolHelpers\.vstest\microsoft.testPlatform.portable\*\*.nupkg" />
+    <EmbeddedResource Include="ToolHelpers\.vstest\microsoft.testplatform.portable\*\*.nupkg" />
   </ItemGroup>
 
   <ItemGroup>
