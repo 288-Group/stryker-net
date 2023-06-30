@@ -1,4 +1,5 @@
 using System.IO.Abstractions;
+using Stryker.Core.Mutators;
 using Stryker.Core.Options.Inputs;
 
 namespace Stryker.Core.Options
@@ -30,7 +31,7 @@ namespace Stryker.Core.Options
         OutputPathInput OutputPathInput { get; init; }
         ReportFileNameInput ReportFileNameInput { get; init; }
         ProjectNameInput ProjectNameInput { get; init; }
-        ProjectUnderTestNameInput ProjectUnderTestNameInput { get; init; }
+        SourceProjectNameInput SourceProjectNameInput { get; init; }
         ProjectVersionInput ProjectVersionInput { get; init; }
         ReportersInput ReportersInput { get; init; }
         SinceInput SinceInput { get; init; }
@@ -76,7 +77,7 @@ namespace Stryker.Core.Options
         public AdditionalTimeoutInput AdditionalTimeoutInput { get; init; } = new();
         public LanguageVersionInput LanguageVersionInput { get; init; } = new();
         public ConcurrencyInput ConcurrencyInput { get; init; } = new();
-        public ProjectUnderTestNameInput ProjectUnderTestNameInput { get; init; } = new();
+        public SourceProjectNameInput SourceProjectNameInput { get; init; } = new();
         public TestProjectsInput TestProjectsInput { get; init; } = new();
         public TestCaseFilterInput TestCaseFilterInput { get; init; } = new();
         public WithBaselineInput WithBaselineInput { get; init; } = new();
@@ -125,7 +126,7 @@ namespace Stryker.Core.Options
                 MutationLevel = MutationLevelInput.Validate(),
                 DevMode = DevModeInput.Validate(),
                 MsBuildPath = MsBuildPathInput.Validate(_fileSystem),
-                SolutionPath = SolutionInput.Validate(_fileSystem),
+                SolutionPath = SolutionInput.Validate(basePath, _fileSystem),
                 TargetFramework = TargetFrameworkInput.Validate(),
                 Thresholds = new Thresholds
                 {
@@ -139,9 +140,9 @@ namespace Stryker.Core.Options
                     LogLevel = VerbosityInput.Validate(),
                     LogToFile = LogToFileInput.Validate(outputPath)
                 },
-                ProjectUnderTestName = ProjectUnderTestNameInput.Validate(),
+                SourceProjectName = SourceProjectNameInput.Validate(),
                 AdditionalTimeout = AdditionalTimeoutInput.Validate(),
-                ExcludedMutations = IgnoreMutationsInput.Validate(),
+                ExcludedMutations = IgnoreMutationsInput.Validate<Mutator>(),
                 ExcludedLinqExpressions = IgnoreMutationsInput.ValidateLinqExpressions(),
                 IgnoredMethods = IgnoredMethodsInput.Validate(),
                 Mutate = MutateInput.Validate(),
@@ -163,7 +164,7 @@ namespace Stryker.Core.Options
                 Since = sinceEnabled,
                 SinceTarget = sinceTarget,
                 ReportTypeToOpen = OpenReportInput.Validate(OpenReportEnabledInput.Validate()),
-                BreakOnInitialTestFailure = BreakOnInitialTestFailureInput.Validate()
+                BreakOnInitialTestFailure = BreakOnInitialTestFailureInput.Validate(),
             };
             return _strykerOptionsCache;
         }

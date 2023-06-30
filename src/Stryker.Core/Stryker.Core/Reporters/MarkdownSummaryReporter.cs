@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions;
@@ -7,6 +8,7 @@ using Spectre.Console;
 using Stryker.Core.Mutants;
 using Stryker.Core.Options;
 using Stryker.Core.ProjectComponents;
+using Stryker.Core.ProjectComponents.TestProjects;
 
 namespace Stryker.Core.Reporters
 {
@@ -31,7 +33,7 @@ namespace Stryker.Core.Reporters
             // This reporter does not report during the testrun
         }
 
-        public void OnMutantsCreated(IReadOnlyProjectComponent reportComponent)
+        public void OnMutantsCreated(IReadOnlyProjectComponent reportComponent, TestProjectsInfo testProjectsInfo)
         {
             // This reporter does not report during the testrun
         }
@@ -41,7 +43,7 @@ namespace Stryker.Core.Reporters
             // This reporter does not report during the testrun
         }
 
-        public void OnAllMutantsTested(IReadOnlyProjectComponent reportComponent)
+        public void OnAllMutantsTested(IReadOnlyProjectComponent reportComponent, TestProjectsInfo testProjectsInfo)
         {
             var files = reportComponent.GetAllFiles();
             if (files.Any())
@@ -50,24 +52,19 @@ namespace Stryker.Core.Reporters
                 var reportPath = Path.Combine(_options.ReportPath, filename);
                 var reportUri = "file://" + reportPath.Replace("\\", "/");
 
-                GenerateMarkdownReport(_options, reportPath, files, reportComponent.GetMutationScore());
+                GenerateMarkdownReport(reportPath, files, reportComponent.GetMutationScore());
 
                 _console.WriteLine();
                 _console.MarkupLine("[Green]Your Markdown summary has been generated at:[/]");
 
-                if (_console.Profile.Capabilities.Links)
-                {
-                    // We must print the report path as the link text because on some terminals links might be supported but not actually clickable: https://github.com/spectreconsole/spectre.console/issues/764
-                    _console.MarkupLineInterpolated($"[Green][link={reportUri}]{reportPath}[/][/]");
-                }
-                else
-                {
-                    _console.MarkupLineInterpolated($"[Green]{reportUri}[/]");
-                }
+                // We must print the report path as the link text because on some terminals links might be supported but not actually clickable: https://github.com/spectreconsole/spectre.console/issues/764
+                _console.MarkupLineInterpolated(_console.Profile.Capabilities.Links
+                    ? (FormattableString)$"[Green][link={reportUri}]{reportPath}[/][/]"
+                    : (FormattableString)$"[Green]{reportUri}[/]");
             }
         }
 
-        private void GenerateMarkdownReport(StrykerOptions options, string reportPath, IEnumerable<IFileLeaf> files, double mutationScore)
+        private void GenerateMarkdownReport(string reportPath, IEnumerable<IFileLeaf> files, double mutationScore)
         {
             if (!files.Any())
             {
@@ -111,13 +108,14 @@ namespace Stryker.Core.Reporters
         private MdTableRow GenerateFileData(IFileLeaf fileScores)
         {
             var mutationScore = fileScores.GetMutationScore();
-            var values = new List<string>();
+            var values = new List<string>
+            {
+                // Files
+                fileScores.RelativePath ?? "All files",
 
-            // Files
-            values.Add(fileScores.RelativePath ?? "All files");
-
-            // Score
-            values.Add(double.IsNaN(mutationScore) ? "N/A" : $"{mutationScore * 100:N2}%");
+                // Score
+                double.IsNaN(mutationScore) ? "N/A" : $"{mutationScore * 100:N2}%"
+            };
 
             var mutants = fileScores.Mutants.ToList();
 
@@ -141,17 +139,17 @@ namespace Stryker.Core.Reporters
 
             // Total Detected
             values.Add(mutants
-                    .Count(m => m.ResultStatus == MutantStatus.Killed || m.ResultStatus == MutantStatus.Timeout)
+                    .Count(m => m.ResultStatus is MutantStatus.Killed or MutantStatus.Timeout)
                     .ToString());
 
             // Total Undetected
             values.Add(
                 mutants
-                    .Count(m => m.ResultStatus == MutantStatus.Survived || m.ResultStatus == MutantStatus.NoCoverage)
+                    .Count(m => m.ResultStatus is MutantStatus.Survived or MutantStatus.NoCoverage)
                     .ToString());
 
             // Total
-            values.Add(mutants.Count().ToString());
+            values.Add(mutants.Count.ToString());
             return new MdTableRow(values);
         }
     }

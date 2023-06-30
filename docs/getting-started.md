@@ -18,11 +18,11 @@ Nuget is required for dotnet framework. Follow the instructions at [Install nuge
 
 Make sure NuGet targets and build tasks are installed. You can install them with visual studio by going to Tools > Get Tools and Features > Individual components > Code tools
 
-[NuGet targets and build tasks feature](./images/install-nuget-targets.png)
+![NuGet targets and build tasks feature](./images/install-nuget-targets.png)
 
 ## Migrating
 
-Coming from Stryker.NET V0.x? Take a look at our [migration guide](https://stryker-mutator.io/docs/stryker-net/migration-guide).
+Coming from an older version of Stryker.NET? Take a look at our [migration guide](https://stryker-mutator.io/docs/stryker-net/migration-guide).
 
 # Install stryker
 

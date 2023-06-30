@@ -8,7 +8,7 @@
   </PropertyGroup>
   
   <PropertyGroup>
-    <VersionPrefix>3.0.1</VersionPrefix>
+    <VersionPrefix>3.9.2</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <PackageId>stryker</PackageId>
     <Product>Mutation Testing</Product>
@@ -30,8 +30,8 @@
   <ItemGroup>
     <EmbeddedResource Include="InjectedHelpers\MutantControl.cs" />
     <EmbeddedResource Include="InjectedHelpers\Coverage\MutantContext.cs" />
-    <EmbeddedResource Include="Reporters\HtmlReporter\Files\dist\mutation-test-elements.js" />
-    <EmbeddedResource Include="Reporters\HtmlReporter\Files\mutation-report.html" />
+    <EmbeddedResource Include="Reporters\Html\Files\dist\mutation-test-elements.js" />
+    <EmbeddedResource Include="Reporters\Html\Files\mutation-report.html" />
 
     <EmbeddedResource Include="ToolHelpers\.vstest\microsoft.testplatform.portable\*\*.nupkg" />
   </ItemGroup>
@@ -50,6 +50,7 @@
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" />
     <PackageReference Include="Mono.Cecil" />
     <PackageReference Include="NuGet.Frameworks" />
+    <PackageReference Include="ResXResourceReader.NetStandard" />
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.Extensions.Logging" />
     <PackageReference Include="Serilog.Extensions.Logging.File" />
@@ -57,7 +58,7 @@
     <PackageReference Include="ShellProgressBar" />
     <PackageReference Include="Spectre.Console" />
     <PackageReference Include="Spectre.Console.Analyzer" />
-    <PackageReference Include="System.IO.Abstractions" />
+    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" />
   </ItemGroup>
 
   <ItemGroup>

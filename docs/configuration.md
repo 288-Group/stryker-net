@@ -51,7 +51,9 @@ Default: `null`
 Command line: `[-s|--solution] "../solution.sln"`  
 Config file: `"solution": '../solution.sln'`
 
-The solution file is required for dotnet framework projects. You may specify the solution file for dotnet core projects. In some cases this can help with dependency resolution.
+The solution path can be supplied to help with dependency resolution. If stryker is ran from the solution file location the solution file will be analyzed and all projects in the solution will be tested by stryker.
+
+Note: The solution file is required for dotnet framework projects. For dotnet (core) projects the solution file is optional.
 
 ### `project` <`file-name`>
 
@@ -102,7 +104,7 @@ The patterns support [globbing syntax](https://en.wikipedia.org/wiki/Glob_(progr
 | '\*\*/\*.\*'   | MyFolder/MyFactory.cs    | Yes               |
 | '!\*\*/MyFactory.cs'   | MyFolder/MyFactory.cs    | No        |
 
-To allow more fine grained filtering you can also specify the span of text that should be in- or excluded. A span is defined by the indices of the first character and the last character.
+To allow more fine-grained filtering you can also specify the span of text that should be in- or excluded. A span is defined by the indices of the first character and the last character.
 
 ```bash
 dotnet stryker -m "MyFolder/MyService.cs{10..100}"
@@ -130,6 +132,8 @@ Valid language versions:
 - Csharp7_3
 - Csharp8
 - Csharp9
+- Csharp10
+- Csharp11
 - Preview (next language version)
 
 *\* Csharp version 1 is not allowed because stryker injects helper code that uses csharp 2 language features.*
@@ -137,7 +141,7 @@ Valid language versions:
 ### `target-framework` <`string`>
 
 Default: randomly selected
-Command line: `N/A`  
+Command line: `target-framework`  
 Config file: `"target-framework": "netcoreapp3.1"`
 
 If the project targets multiple frameworks, this way you can specify the particular framework to build against. If you specify a non-existent target, Stryker will build the project against a random one (or the only one if so).
@@ -178,7 +182,7 @@ Default: `Standard`
 Command line: `[-l|--mutation-level] "Advanced"`  
 Config file: `"mutation-level": 'Advanced'`
 
-Stryker supports multiple mutation levels. Each level comes with a specific set of mutations. Each level contains the mutations of the levels below it. By setting the level to `Complete` you will get all possible mutations and the thus the strictest mutation test. This comes at the price of longer runtime as more mutations will be generated and tested. 
+Stryker supports multiple mutation levels. Each level comes with a specific set of mutations. Each level contains the mutations of the levels below it. By setting the level to `Complete` you will get all possible mutations and thus the strictest mutation test. This comes at the price of longer runtime as more mutations will be generated and tested. 
 
 The levels are:
 - Basic
@@ -189,20 +193,20 @@ The levels are:
 | Mutations| Level| 
 | ------------- | ------------- | 
 | Arithmetic Operators | Basic|
-| Block (not yet implemented) | Basic|
+| Block statements | Basic|
+| Logical Operators | Basic |
+| Bitwise Operators | Basic |
 | Equality Operators | Standard |
 | Boolean Literals | Standard|
 | Assignment statements | Standard |
 | Collection initializer | Standard |
 | Unary Operators | Standard |
 | Update Operators | Standard |
-| String Literals and Constants | Standard |
-| Bitwise Operators | Standard |
+| String Literals | Standard |
 | Linq Methods | Standard |
 | Checked Statements | Standard |
 | Regex | Advanced |
-| Advanced Linq Methods (not yet implemented) | Complete |
-| Advanced Regex (not yet implemented) | Complete |
+| Math Methods | Advanced |
 
 ### `reporter` <`string[]`>
 
@@ -232,7 +236,7 @@ Default: `html`
 Command line: `[-o:html|--open-report:dashboard]`
 Config file: `N/A`
 
-When this option is passed, generated reports should open in the browser automatically after stryker is done. Both html and dashboard reports can be opened automatically.
+When this option is passed, generated reports should open in the browser automatically once Stryker starts testing mutants, and will update the report till Stryker is done. Both html and dashboard reports can be opened automatically.
 
 Valid values:
 - html
@@ -369,6 +373,14 @@ Both, method names and constructor names support wildcards.
 }
 ```
 
+### `output` <`string`>
+
+Default: `null`  
+Command line: `[--output|-O] /path/to/output`  
+Config file: `N/A`
+
+Changes the output path for Stryker logs and reports. This can be an absolute or relative path.
+
 ## Optimization
 
 ### `coverage-analysis` <`string`>
@@ -383,23 +395,23 @@ Use coverage info to speed up execution.
 - **perTestInIsolation**: like 'perTest', but running each test in an isolated run. This results in more accurate
 coverage information for some mutants (see below), at the expense of a longer startup time.
 - **all**: capture the list of mutants covered by a test. Test only the mutants covered by unit tests. Non covered mutants are assumed as survivors. Fast option.
-- **off**: coverage data is not captured. All unit tests are ran against all mutants.
+- **off**: coverage data is not captured. All unit tests are run against all mutants.
 
 #### Notes on coverage analysis
 * Results should not be impacted by coverage analysis. If you identify a suspicious survivor, run
 Stryker again without coverage analysis and report an issue if this mutant is killed by this run.
-* when using `perTest` mode, mutants that are executed as part as some static constructor/initializer 
+* When using `perTest` mode, mutants that are executed as part of some static constructor/initializer 
 are run against all tests as Stryker cannot reliably capture coverage for those. This is a consequence of static
-constructors/initialisers being called only once during tests. This heuristic is not needed when using
-`perTestInIsolation` due to test being run one by one.
+constructors/initializers being called only once during tests. This heuristic is not needed when using
+`perTestInIsolation` due to tests being run one by one.
 
 ### `disable-bail` <`flag`>
 
 Default: `false`  
-Command line: `N/A`  
+Command line: `--disable-bail`  
 Config file: `"disable-bail": true`
 
-Stryker aborts a unit testrun for a mutant as soon as one test fails because this is enough to confirm the mutant is killed. This can reduce the total runtime but also means you miss information about individual unit tests (eg if a unit test does not kill any mutants and is therefore useless). You can disable this behavior and run all unit tests for a mutant to completion. This can be especially useful when you want to find useless unit tests.
+Stryker aborts a unit testrun for a mutant as soon as one test fails because this is enough to confirm the mutant is killed. This can reduce the total runtime but also means you miss information about individual unit tests (e.g. if a unit test does not kill any mutants and is therefore useless). You can disable this behavior and run all unit tests for a mutant to completion. This can be especially useful when you want to find useless unit tests.
 
 ### `disable-mix-mutants` <`flag`>
 
@@ -446,14 +458,14 @@ Default: `null`
 Command line: `N/A`  
 Config file: `"since": { "ignore-changes-in: ['**/*Translations.json'] }`
 
-Allows to specify an array of files which should be ignored if present in the diff.
+Allows to specify an array of files that should be ignored if present in the diff.
 This feature is only recommended when you are sure these files will not affect results, or when you are prepared to sacrifice accuracy for performance.
             
 Use [globbing syntax](https://en.wikipedia.org/wiki/Glob_(programming)) for wildcards. Example: ['**/*Assets.json','**/favicon.ico']
 
 ## Experimental
 
-**The features in this section are experimental. Results can contain false postives and false negatives.**
+**The features in this section are experimental. Results can contain false positives and false negatives.**
 
 ## Baseline
 
@@ -566,7 +578,7 @@ Default: `info`
 Command line: `[-V|--verbosity] trace`  
 Config file: `"verbosity": 'trace'`
 
-Change the console `verbosity` of stryker when you want more or less details about the mutation testrun.
+Change the console `verbosity` of Stryker when you want more or less details about the mutation testrun.
 
 All available loglevels are
 * error
@@ -591,7 +603,7 @@ Default: `false`
 Command line: `--dev-mode`  
 Config file: `N/A`
 
-Stryker will not gracefully recover from compilation errors, instead crash immediately. Used during development to quickly diagnose errors.  
+Stryker will not gracefully recover from compilation errors, but instead crash immediately. Used during development to quickly diagnose errors.  
 Also enables more debug logs not generally useful to normal users.
 
 ## Misc
@@ -621,12 +633,12 @@ Default: `null`
 Command line: `--msbuild-path "c://MsBuild/MsBuild.exe"`  
 Config file: `N/A`  
 
-By default stryker tries to autodiscover msbuild on your system. If stryker fails to discover msbuild you may supply the path to msbuild manually with this option.
+By default, Stryker tries to auto-discover msbuild on your system. If Stryker fails to discover msbuild you may supply the path to msbuild manually with this option.
 
 ### `break-on-initial-test-failure` <`flag`>
 
 Default: `false`  
 Command line: `--break-on-initial-test-failure`  
-Config file: `N/A`
+Config file: `break-on-initial-test-failure`
 
 Instruct Stryker to break execution when at least one test failed on initial test run.
