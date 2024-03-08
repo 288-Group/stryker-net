@@ -148,6 +148,7 @@ namespace Stryker.Core.TestRunners.VsTest
                 return determineConsoleParameters;
             }
 
+            determineConsoleParameters.TraceLevel = Options.DevMode ? TraceLevel.Verbose : TraceLevel.Info;
             var vsTestLogPath = _fileSystem.Path.Combine(LogPath, $"{runnerId}-log.txt");
             _fileSystem.Directory.CreateDirectory(LogPath);
             determineConsoleParameters.LogFilePath = vsTestLogPath;
@@ -165,8 +166,6 @@ namespace Stryker.Core.TestRunners.VsTest
         }
 
         // keeps only test assemblies which have tests.
-        public bool IsValidSourceList(IEnumerable<string> sources) => sources.Any( s=> TestsPerSource.TryGetValue(s, out var result ) && result.Count >0);
-
         public IEnumerable<string> GetValidSources(IEnumerable<string> sources) =>
             sources.Where(s => TestsPerSource.TryGetValue(s, out var result) && result.Count > 0);
 
@@ -191,7 +190,7 @@ namespace Stryker.Core.TestRunners.VsTest
             var wrapper = BuildVsTestWrapper("TestDiscoverer");
             var messages = new List<string>();
             var handler = new DiscoveryEventHandler(messages);
-            wrapper.DiscoverTestsAsync(new List<string> { newSource }, GenerateRunSettingsForDiscovery(), handler);
+            wrapper.DiscoverTests(new List<string> { newSource }, GenerateRunSettingsForDiscovery(), handler);
 
             handler.WaitEnd();
             if (handler.Aborted)
@@ -236,6 +235,11 @@ namespace Stryker.Core.TestRunners.VsTest
             {
                 _testFramework |= TestFrameworks.xUnit;
             }
+
+            if (tests.Any(testCase => testCase.Framework == TestFrameworks.MsTest))
+            {
+                _testFramework &= ~TestFrameworks.MsTest;
+            }
         }
 
         private string GenerateRunSettingsForDiscovery()
@@ -247,6 +251,8 @@ namespace Stryker.Core.TestRunners.VsTest
             return $@"<RunSettings>
  <RunConfiguration>
   <MaxCpuCount>{Math.Max(1, Options.Concurrency)}</MaxCpuCount>
+  <InIsolation>true</InIsolation>
+<DisableAppDomain>true</DisableAppDomain>
   <DesignMode>true</DesignMode>
 {testCaseFilter}
  </RunConfiguration>
@@ -263,7 +269,6 @@ namespace Stryker.Core.TestRunners.VsTest
                     mutantTestsMap?.Select(e => (e.Key, e.Value.GetGuids())),
                     helperNameSpace)
                 : string.Empty;
-
             if (_testFramework.HasFlag(TestFrameworks.NUnit))
             {
                 settingsForCoverage = "<CollectDataForEachTestSeparately>true</CollectDataForEachTestSeparately>";
@@ -286,10 +291,11 @@ namespace Stryker.Core.TestRunners.VsTest
                 $@"<RunSettings>
 <RunConfiguration>
   <CollectSourceInformation>false</CollectSourceInformation>
-{(isFullFramework ? @"<DisableAppDomain>true</DisableAppDomain>
-" : string.Empty)}  <MaxCpuCount>1</MaxCpuCount>
+<MaxCpuCount>1</MaxCpuCount>
 {timeoutSettings}{settingsForCoverage}
 <DesignMode>false</DesignMode>
+<InIsolation>true</InIsolation>
+<DisableAppDomain>true</DisableAppDomain>
 {testCaseFilter}</RunConfiguration>{dataCollectorSettings}
 </RunSettings>";
 
